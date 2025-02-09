@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP GRADIENT & DAWN</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>OTP GRADIENT & DAWN</h1>
+
+        <div class="guide-section">
+            <h2>Hướng dẫn lấy API Key</h2>
+            <ol>
+                <li>Truy cập <a href="https://whatismyipaddress.com/vi-vn/index"
+                        target="_blank">whatismyipaddress.com</a></li>
+                <li>Tìm và copy địa chỉ <strong>IPv4</strong> của bạn</li>
+                <li>Gửi IPv4 cho <a href="https://t.me/tunankies" target="_blank">@tunankies</a> trên Telegram</li>
+                <li>Chờ phản hồi và nhận API Key</li>
+                <li>Paste API Key vào ô bên dưới</li>
+            </ol>
+        </div>
+
+        <div class="input-group">
+            <label for="apiKey">API Key:</label>
+            <input type="text" id="apiKey" placeholder="Nhập API key">
+        </div>
+        <div class="input-group">
+            <label for="emailPass">Email:Password</label>
+            <input type="text" id="emailPass" placeholder="example@mail.com:password">
+        </div>
+        <div class="input-group">
+            <label for="otpType">Loại OTP:</label>
+            <select id="otpType">
+                <option value="gradient">Gradient OTP</option>
+                <option value="dawn">Dawn OTP</option>
+            </select>
+        </div>
+        <button onclick="getMessages()">Lấy tin nhắn</button>
+        <div id="result" class="result"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
