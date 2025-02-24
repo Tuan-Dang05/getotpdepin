@@ -39,8 +39,12 @@ async function getMessages() {
         for (const message of messages) {
             const isGradient = message.from.includes('gradient.network');
             const isDawn = message.from.includes('dawninternet.com');
+            const isMeshChain = message.from.includes('meshchain.ai');
 
-            if ((otpType === 'gradient' && isGradient) || (otpType === 'dawn' && isDawn)) {
+            if ((otpType === 'gradient' && isGradient) || 
+                (otpType === 'dawn' && isDawn) || 
+                (otpType === 'meshchain' && isMeshChain)) {
+                
                 const htmlContent = message.html;
 
                 if (isGradient) {
@@ -71,7 +75,6 @@ async function getMessages() {
                         otpResult += `
                             <div class="otp-container dawn">
                                 <div class="otp-title">
-                                    <img src="https://www.aeropres.in/static/dawn-extension.png" alt="Dawn">
                                     <span>Dawn Verification Link</span>
                                 </div>
                                 <div class="verify-key">
@@ -86,6 +89,26 @@ async function getMessages() {
                             </div>
                         `;
                     }
+                } else if (isMeshChain) {
+                    const meshChainOtp = extractMeshChainOTP(htmlContent);
+                    if (meshChainOtp) {
+                        otpResult += `
+                            <div class="otp-container meshchain">
+                                <div class="otp-title">
+                                    <span>MeshChain Verification Code</span>
+                                </div>
+                                <div class="otp-digits">
+                                    ${meshChainOtp.split('').map(digit => `
+                                        <div class="otp-digit">${digit}</div>
+                                        ${digit === meshChainOtp[2] ? '<div class="otp-separator"></div>' : ''}
+                                    `).join('')}
+                                </div>
+                                <div class="timestamp">
+                                    Received: ${new Date(message.date).toLocaleString()}
+                                </div>
+                            </div>
+                        `;
+                    }
                 }
             }
         }
@@ -93,7 +116,11 @@ async function getMessages() {
         if (otpResult) {
             resultDiv.innerHTML = otpResult;
         } else {
-            resultDiv.innerHTML = `Không tìm thấy mã OTP ${otpType === 'gradient' ? 'Gradient' : 'Dawn'} trong các email gần đây.`;
+            resultDiv.innerHTML = `Không tìm thấy mã OTP ${
+                otpType === 'gradient' ? 'Gradient' : 
+                otpType === 'dawn' ? 'Dawn' : 
+                'MeshChain'
+            } trong các email gần đây.`;
         }
     } catch (error) {
         resultDiv.innerHTML = `Lỗi: ${error.message}`;
@@ -111,7 +138,6 @@ function extractGradientOTP(htmlContent) {
         }
     }
 
-    // Loại bỏ các div trống
     return otpCharacters.filter(char => char.trim() !== '');
 }
 
@@ -125,4 +151,13 @@ function extractKeyFromUrl(url) {
     const keyRegex = /key=([a-zA-Z0-9-]+)/;
     const match = url.match(keyRegex);
     return match ? match[1] : null;
-} 
+}
+
+function extractMeshChainOTP(htmlContent) {
+    const otpRegex = /Your verification code is: <strong>(\d+)<\/strong>/g;
+    const matches = [...htmlContent.matchAll(otpRegex)]; // Lấy tất cả kết quả khớp
+
+    if (matches.length === 0) return null; // Không tìm thấy OTP
+
+    return matches[matches.length - 1][1]; // Lấy OTP cuối cùng (mới nhất)
+}
